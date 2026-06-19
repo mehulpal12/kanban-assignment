@@ -19,6 +19,7 @@
     "express": "^4.22.2",
     "multer": "^2.2.0",
     "nanoid": "^5.1.14",
+    "recharts": "^3.8.1",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

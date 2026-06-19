@@ -3,7 +3,8 @@ import { DragDropContext } from '@hello-pangea/dnd';
 import { useBoard } from '../context/BoardContext';
 import { useSocket } from '../context/SocketContext';
 import { Column } from './Column';
-import { TaskModal } from './TaskModal'; // Import modal component
+import { TaskModal } from './TaskModal';
+import { ProgressChart } from './ProgressChart'; // Import the new metrics view
 
 const BoardHeader = ({ isConnected, onAddTask }) => (
   <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
@@ -26,7 +27,7 @@ const BoardHeader = ({ isConnected, onAddTask }) => (
 export const KanbanBoard = () => {
   const { boardState, createTask, moveTask } = useBoard();
   const { isConnected } = useSocket();
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal control state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalSubmit = (taskData) => {
     createTask({
@@ -47,22 +48,20 @@ export const KanbanBoard = () => {
     <div className="min-h-screen bg-slate-100 flex flex-col">
       <BoardHeader isConnected={isConnected} onAddTask={() => setIsModalOpen(true)} />
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <main className="flex-1 p-8 overflow-x-auto">
+      <main className="flex-1 p-8 overflow-x-auto space-y-6">
+        {/* Real-time analytical matrix overview */}
+        <ProgressChart />
+
+        <DragDropContext onDragEnd={handleDragEnd}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-start">
             <Column title="To Do" id="todo" taskIds={boardState.columnOrder.todo} tasks={boardState.tasks} />
             <Column title="In Progress" id="in-progress" taskIds={boardState.columnOrder['in-progress']} tasks={boardState.tasks} />
             <Column title="Done" id="done" taskIds={boardState.columnOrder.done} tasks={boardState.tasks} />
           </div>
-        </main>
-      </DragDropContext>
+        </DragDropContext>
+      </main>
 
-      {/* Task overlay input form module */}
-      <TaskModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSubmit={handleModalSubmit} 
-      />
+      <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleModalSubmit} />
     </div>
   );
 };
